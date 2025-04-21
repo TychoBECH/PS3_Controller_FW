@@ -57,7 +57,7 @@ void IO_Init(void){
 	
 	//Port D
 	LATD = 0x00; //-> Output latch register
-	TRISD = 0b11111011; //Tristate register 1 = input
+	TRISD = 0b11110100; //Tristate register 1 = input
 	ANSELD = 0x00; //Analog select register 1 = Analog input
 	WPUD = 0x00; //Wak pull up register 0 = disabled
 	INLVLD = 0xFF; //input level setting 1 = standard levels are used
@@ -66,12 +66,23 @@ void IO_Init(void){
 	
 	//Port E
 	LATE = 0x00; //-> Output latch register
-	TRISE = 0xFF; //Tristate register 1 = input
+	TRISE = 0b11111011; //Tristate register 1 = input
 	WPUE = 0x00; //Wak pull up register 0 = disabled
 	INLVLE = 0xFF; //input level setting 1 = standard levels are used
+	SLRCONE = 0xFF; //Slew rate controll  1 = slew rate is limited
+	ODCONE = 0x00; //Open drain controll 0 = Push Pull opperation
+	
+	//Port F
+	LATF = 0x00; //-> Output latch register
+	TRISF = 0b11110101; //Tristate register 1 = input
+	WPUF = 0x00; //Wak pull up register 0 = disabled
+	INLVLF = 0xFF; //input level setting 1 = standard levels are used
+	SLRCONF = 0xFF; //Slew rate controll  1 = slew rate is limited
+	ODCONF = 0x00; //Open drain controll 0 = Push Pull opperation
 }
 
 void IO_Deinit(void){
+	// TODO -> Update the deinit function for new device
 	//Port A
 	//PORTA = 0x00; -> No need to be set is the read register
 	LATA = 0x00; //-> Output latch register
