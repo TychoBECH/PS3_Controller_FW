@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>drivers/io_driver.h</itemPath>
       <itemPath>drivers/system.h</itemPath>
+      <itemPath>drivers/pps_driver.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -22,7 +23,9 @@
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <itemPath>drivers/io_driver.c</itemPath>
         <itemPath>drivers/system.c</itemPath>
+        <itemPath>drivers/pps_driver.c</itemPath>
       </logicalFolder>
+      <itemPath>drivers/main.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
