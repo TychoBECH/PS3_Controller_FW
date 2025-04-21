@@ -13,9 +13,11 @@
  */
 
 #include "io_driver.h"
+#include "pps_driver.h"
 
 
 void System_Init(void) {
 	IO_Init();
+	PPS_Init();
 }
 
