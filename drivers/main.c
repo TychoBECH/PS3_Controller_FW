@@ -10,5 +10,6 @@
 #include "system.h"
 
 void main(void) {
+	System_Init();
 	return;
 }

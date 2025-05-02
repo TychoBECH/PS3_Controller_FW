@@ -49,7 +49,7 @@ void IO_Init(void){
 	WPUC = 0x00; //Wak pull up register 0 = disabled
 	INLVLC = 0xFF; //input level setting 1 = standard levels are used
 	SLRCONC = 0xFF; //Slew rate controll  1 = slew rate is limited
-	ODCONC = 0x00; //Open drain controll 0 = Push Pull opperation
+	ODCONC = 0b00011000; //Open drain controll 0 = Push Pull opperation-> "1" for I2C pins
 	
 	//Pin specific I2C Settings
 	RC3I2C = 0x41;	//Slewrate for fast mode 0x40 && No Pullups(are on the board)0x00 && I2C Levels 0x01
