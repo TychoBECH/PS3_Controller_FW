@@ -25,8 +25,8 @@ void I2C_Init(void) {
 	/* TXU No underflow; CSD Clock Stretching enabled; RXO No overflow; P Cleared by hardware after sending Stop; ACKDT Acknowledge; ACKCNT Not Acknowledge;  */
 	I2C1CON1 = 0x80;
 	/* ABD enabled; GCEN disabled; ACNT disabled; SDAHT 30 ns hold time; BFRET 8 I2C Clock pulses;  */
-	I2C1CON2 = 0x8;
-	/* ACNTMD 8 bits are loaded into I2CxCNTL; FME Standard Mode;  */
+	I2C1CON2 = 0x18;
+	/* ACNTMD 8 bits are loaded into I2CxCNTL; FME Standard Mode; Address buffers disabled */
 	I2C1CON3 = 0x0;
 	/* CLK Fosc;  */
 	I2C1CLK = 0x1;
@@ -72,8 +72,24 @@ void I2C_Deinit(void) {
 	I2C1BAUD = 0x00;
 }
 
-void I2C_Start(void) {
+I2C_Result_t I2C_Start(void) {
+	//Check if buss is in use
+	if (i2cTransaction.busy) {
+		return I2C_ERROR_BUSY;
+	}
 	
+	i2cTransaction.busy = true;
+	//check if it is a TX or RX start
+	if(i2cTransaction.txLength > 0){
+		I2C1CNT = i2cTransaction.txLength;
+	}else if(i2cTransaction.rxLength > 0){
+		I2C1CNT = i2cTransaction.rxLength;
+	}
+	
+	//write slave address and read write bit
+	I2C1TXB = (i2cTransaction.address << 1) | i2cTransaction.read;
+	
+	return I2C_OK;
 }
 
 void I2C_Stop(void) {

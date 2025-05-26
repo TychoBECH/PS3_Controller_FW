@@ -52,7 +52,8 @@
 
 //</editor-fold>
 
-//<editor-fold desc="I2C type definitions for I2C transaction object and errors>
+//<editor-fold desc="I2C type definitions for I2C transaction object and errors">
+
 typedef enum {
     I2C_STATE_IDLE,
     I2C_STATE_START,
@@ -72,7 +73,7 @@ typedef struct {
     uint8_t txIndex;
     uint8_t rxIndex;
     bool read;   // 1 for read operation, 0 for write
-    bool busy;
+    bool busy;	// 1 for is busy
 } I2C_Transaction_t;
 
 typedef enum {
@@ -112,13 +113,13 @@ void I2C_Init(void);
 
 void I2C_Deinit(void);
 
-void I2C_Start(void);
+I2C_Result_t I2C_Start(void);
 
-void I2C_Stop(void);
+I2C_Result_t I2C_Stop(void);
 
 void I2C_RepeatedStart(void);
 
-bool I2C_WriteByte(uint8_t data);
+I2C_Result_t I2C_WriteByte(uint8_t data);
 
 uint8_t I2C_ReadByte(bool ack);
 
