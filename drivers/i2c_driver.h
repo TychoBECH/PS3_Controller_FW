@@ -119,13 +119,15 @@ void I2C_Init(void);
 
 void I2C_Deinit(void);
 
-I2C_Result_t I2C_Write(uint8_t address, uint8_t *txBuffer, uint8_t txLenght);
+I2C_Result_t I2C_Write(uint8_t address, uint8_t *txBuffer, uint8_t txLength);
 
-I2C_Result_t I2C_Read(uint8_t address, uint8_t *rxBuffer, uint8_t rxLenght);
+I2C_Result_t I2C_Read(uint8_t address, uint8_t *rxBuffer, uint8_t rxLength);
 
-I2C_Result_t I2C_WriteRead(uint8_t address, uint8_t *txBuffer, uint8_t txLenght, uint8_t *rxBuffer, uint8_t rxLenght);
+I2C_Result_t I2C_WriteRead(uint8_t address, uint8_t *txBuffer, uint8_t txLength, uint8_t *rxBuffer, uint8_t rxLength);
 
-void I2C_Service(void);
+I2C_Result_t I2C_Service(void);
+
+bool I2C_isBusy(void);
 
 #ifdef	__cplusplus
 extern "C" {
