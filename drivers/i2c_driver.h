@@ -55,36 +55,42 @@
 //<editor-fold desc="I2C type definitions for I2C transaction object and errors">
 
 typedef enum {
-    I2C_STATE_IDLE,
-    I2C_STATE_START,
-    I2C_STATE_ADDR,
-    I2C_STATE_WRITE,
-    I2C_STATE_READ,
-    I2C_STATE_STOP
+	I2C_STATE_IDLE,
+	I2C_STATE_START,
+	I2C_STATE_SEND_ADDRESS,
+	I2C_STATE_SEND_DATA,
+	I2C_STATE_RECEIVE_DATA,
+	I2C_STATE_RESTART,
+	I2C_STATE_SEND_ACK,
+	I2C_STATE_SEND_NACK,
+	I2C_STATE_STOP,
+	I2C_STATE_COMPLETE,
+	I2C_STATE_ERROR
 } I2C_State_t;
 
-typedef struct {
-    I2C_State_t state;
-    uint8_t address;
-    const uint8_t *txBuffer;
-    uint8_t *rxBuffer;
-    uint8_t txLength;
-    uint8_t rxLength;
-    uint8_t txIndex;
-    uint8_t rxIndex;
-    bool read;   // 1 for read operation, 0 for write
-    bool busy;	// 1 for is busy
-} I2C_Transaction_t;
-
 typedef enum {
-    I2C_OK = 0,
-    I2C_ERROR_BUSY,
-    I2C_ERROR_NACK,
-    I2C_ERROR_COLLISION,
-    I2C_ERROR_TIMEOUT,
-    I2C_ERROR_INVALID_STATE,
-    I2C_ERROR_UNKNOWN
+	I2C_OK = 0,
+	I2C_ERROR_BUSY,
+	I2C_ERROR_NACK,
+	I2C_ERROR_COLLISION,
+	I2C_ERROR_TIMEOUT,
+	I2C_ERROR_INVALID_STATE,
+	I2C_ERROR_UNKNOWN
 } I2C_Result_t;
+
+typedef struct {
+	I2C_State_t state;
+	uint8_t address;
+	uint8_t *txBuffer;
+	uint8_t *rxBuffer;
+	uint8_t txLength;
+	uint8_t rxLength;
+	uint8_t txIndex;
+	uint8_t rxIndex;
+	bool read; // 1 for read operation, 0 for write
+	bool busy; // 1 for is busy
+	I2C_Result_t result;
+} I2C_Transaction_t;
 
 //</editor-fold>
 
@@ -113,15 +119,11 @@ void I2C_Init(void);
 
 void I2C_Deinit(void);
 
-I2C_Result_t I2C_Start(void);
+I2C_Result_t I2C_Write(uint8_t address, uint8_t *txBuffer, uint8_t txLenght);
 
-I2C_Result_t I2C_Stop(void);
+I2C_Result_t I2C_Read(uint8_t address, uint8_t *rxBuffer, uint8_t rxLenght);
 
-void I2C_RepeatedStart(void);
-
-I2C_Result_t I2C_WriteByte(uint8_t data);
-
-uint8_t I2C_ReadByte(bool ack);
+I2C_Result_t I2C_WriteRead(uint8_t address, uint8_t *txBuffer, uint8_t txLenght, uint8_t *rxBuffer, uint8_t rxLenght);
 
 void I2C_Service(void);
 
