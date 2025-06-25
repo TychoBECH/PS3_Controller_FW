@@ -137,7 +137,7 @@ I2C_Result_t I2C_WriteRead(uint8_t address, uint8_t *txBuffer, uint8_t txLength,
 I2C_Result_t I2C_Service(void) {
 	//Check if action is needed and return if not
 	if (!i2cTransaction.busy) {
-		return I2C_ERROR_BUSY;
+		return I2C_OK;
 	}
 
 	//actions are needed -> Lets see what

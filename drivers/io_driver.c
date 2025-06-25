@@ -43,9 +43,9 @@ void IO_Init(void){
 	RB2I2C = 0x00;
 	
 	//Port C
-	LATC = 0x00; //-> Output latch register
-	TRISC = 0b11111011; //Tristate register 1 = input
-	ANSELC = 0x00; //Analog select register 1 = Analog input
+	LATC = 0x18; //-> Output latch register
+	TRISC = 0b11100111; //Tristate register 1 = input
+	ANSELC = 0b11100111; //Analog select register 1 = Analog input
 	WPUC = 0x00; //Wak pull up register 0 = disabled
 	INLVLC = 0xFF; //input level setting 1 = standard levels are used
 	SLRCONC = 0xFF; //Slew rate controll  1 = slew rate is limited
