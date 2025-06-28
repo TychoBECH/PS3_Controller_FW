@@ -12,13 +12,13 @@
 
 uint8_t data[] = {
 	0x01, //Adress to write to
-	0x01, //SSD=1 -> Normal operation									01
+	0x81, //SSD=1 -> Normal operation									01
 	0b00011111, //Output EN1-EN5 = 1 -> Enabled							02
 	0b1, //Output EN6 = 1 -> Enabled									03
 	0b00101010, //Mode -> Current Controll								04
 	0b00101010, //Mode -> Current controll								05
 	0b0, //No Function
-	0b00011111, //Full current -> 10mA?
+	0b00000001, //Full current -> 10mA?
 	0b00000000, //Hold Function
 	0x00, //V_BM default no Idea what this does...
 	0x00, //No Function
@@ -27,7 +27,7 @@ uint8_t data[] = {
 	0x00, //Pattern State 1
 	0x00, //Pattern State 2
 	0x00, //Pattern State 3												0F
-	0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, //OUT1 Full current					10 - 15										
+	0x7F,0x7F,0x7F,0x7F,0x7F,0x7F, //OUT1 Full current					10 - 15										
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, //				16 - 1F
 	//0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //Color 1 Setting Register  -> Not needed due to mode Current
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //Color 2 Setting Register		20 - 25

@@ -162,26 +162,30 @@ I2C_Result_t I2C_Service(void) {
 			break;
 
 		case I2C_STATE_SEND_DATA:
-			//check if write on the i2c is done from the address or the last write
-			if (I2C1CON0bits.MDR) {
-				//Check for ACK
-				if (I2C1ERRbits.NACKIF) {
-					//Terminate Transmission
-					I2C1ERRbits.NACKIF = 0;
-					I2C1CON1bits.ACKCNT = 1;
-					i2cTransaction.state = I2C_STATE_STOP;
-					return I2C_ERROR_NACK; //No more actions needed in this transmission
-				}
-				//check if there is still data to be sent
-				if (I2C1CNT > 0) {
+			//Check for ACK
+			if (I2C1ERRbits.NACKIF) {
+				//Terminate Transmission
+				I2C1ERRbits.NACKIF = 0;
+				I2C1CON1bits.ACKCNT = 1;
+				i2cTransaction.state = I2C_STATE_STOP;
+				return I2C_ERROR_NACK; //No more actions needed in this transmission
+			}
+
+			//Check if buffer empty
+			if (I2C1STAT1bits.TXBE) {
+				//Check if more data needs to be sent
+				if (0 != I2C1CNT) {
 					//Load new data
 					I2C1TXB = i2cTransaction.txBuffer[i2cTransaction.txIndex++];
-				} else if (i2cTransaction.rxLength > 0) {//Check if it is a WriteRead transaction and a Restart is needed
-					I2C1CON0bits.RSEN = 1;
-					i2cTransaction.state = I2C_STATE_RESTART;
-				} else {//nothing more to do then to stop the transaction
-					I2C1CON1bits.ACKCNT = 1;
-					i2cTransaction.state = I2C_STATE_STOP;
+				} else {
+					//Check for Write/Read combined
+					if (i2cTransaction.rxLength > 0) {//Check if it is a WriteRead transaction and a Restart is needed
+						I2C1CON0bits.RSEN = 1;
+						i2cTransaction.state = I2C_STATE_RESTART;
+					} else {
+						I2C1CON1bits.ACKCNT = 1;
+						i2cTransaction.state = I2C_STATE_STOP;
+					}
 				}
 			}
 			break;
@@ -227,7 +231,7 @@ I2C_Result_t I2C_Service(void) {
 	return I2C_OK;
 }
 
-bool I2C_isBusy(void){
+bool I2C_isBusy(void) {
 	return i2cTransaction.busy;
 }
 
