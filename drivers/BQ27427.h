@@ -103,26 +103,72 @@ typedef struct {
 //</editor-fold>
 
 // Comment a function and leverage automatic documentation with slash star star
+void bq27427_send_subcomand(uint16_t subcmd);
+
+void bq27427_send_subcomand_with_data(uint16_t subcmd, uint8_t *data, uint8_t length);
+
+void bq27427_write_word(uint8_t reg, uint16_t data);
+
+void bq27427_send_command(uint8_t command);
+
+uint16_t bq27427_read_word(uint8_t reg);
+
+uint16_t bq27427_get_voltage(void);	//in mV
+
+int16_t bq27427_get_current(void);	//in mA
+
+uint16_t bq27427_get_temperature(void); //in 0.1°C
+
+uint8_t bq27427_get_state_of_charge(void); //in %
+
+
 /**
 	<p><b>Function prototype:</b></p>
+	<code>void bq27427_update_status(bq27427_status_t *status);</code>
   
 	<p><b>Summary:</b></p>
+	<p>Reads key battery status values from the BQ27427 fuel gauge and stores them in a status structure.</p>
 
 	<p><b>Description:</b></p>
+	<p>
+	This function communicates with the BQ27427 battery fuel gauge over I2C and retrieves several standard command values,
+	including voltage, state of charge (SOC), temperature, and current. These values are stored in a user-provided 
+	<b>bq27427_status_t</b> structure. This function is typically called periodically in the main loop to keep battery 
+	monitoring data up to date.
+	</p>
 
 	<p><b>Precondition:</b></p>
+	<p>
+	The I2C interface must be initialized with <code>I2C_Init()</code>, and the <b>status</b> pointer must point to a valid
+	<b>bq27427_status_t</b> structure. The fuel gauge must be properly powered and initialized.
+	</p>
 
 	<p><b>Parameters:</b></p>
+	<ul>
+		<li><b>status</b> - Pointer to a <code>bq27427_status_t</code> structure that will be filled with the latest battery readings.</li>
+	</ul>
 
 	<p><b>Returns:</b></p>
+	<p>
+	None. This function updates the fields of the provided <code>bq27427_status_t</code> struct directly.
+	</p>
 
 	<p><b>Example:</b></p>
 	<code>
- 
+	bq27427_status_t batteryStatus;
+	bq27427_update_status(&batteryStatus);
+
+	printf("Voltage: %umV\n", batteryStatus.voltage);
+	printf("SOC: %u%%\n", batteryStatus.soc);
 	</code>
 
 	<p><b>Remarks:</b></p>
+	<p>
+	This function may block briefly while waiting for I2C transactions to complete. If more advanced non-blocking behavior is needed,
+	consider integrating the I2C_Service() calls into a task loop or scheduler.
+	</p>
  */
+void bq27427_update_status(bq27427_status_t *status);
 
 
 #ifdef	__cplusplus
