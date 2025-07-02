@@ -135,7 +135,7 @@ void IO_SetPinDirection(uint8_t pin, bool direction){
 	//read modify write
 	uint8_t buffer = *ptr;
 	buffer = buffer & (~(1<<bit_offset));//clears selected bit
-	buffer = buffer | ((uint8_t)direction<<bit_offset);
+	buffer = buffer | (uint8_t)(direction<<bit_offset);
 	*ptr = buffer;	
 }
 
@@ -150,7 +150,7 @@ void IO_WritePin(uint8_t pin, bool value){
 	//read modify write
 	uint8_t buffer = *ptr;
 	buffer = buffer & (~(1<<bit_offset));//clears selected bit
-	buffer = buffer | ((uint8_t)value<<bit_offset);
+	buffer = buffer | (uint8_t)(value<<bit_offset);
 	*ptr = buffer;		
 }
 

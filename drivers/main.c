@@ -9,6 +9,7 @@
 #include <xc.h>
 #include "system.h"
 #include "i2c_driver.h"
+#include "BQ27427.h"
 
 uint8_t data[] = {
 	0x01, //Adress to write to

@@ -12,8 +12,6 @@
  *
  */
 
-#include <pic18f56q71.h>
-
 #include "i2c_driver.h"
 
 #define _XTAL_FREQ 64000000
@@ -144,7 +142,7 @@ I2C_Result_t I2C_Service(void) {
 	switch (i2cTransaction.state) {
 		case I2C_STATE_START:
 			//-> ADB is enabled -> Load address
-			I2C1ADB1 = (i2cTransaction.address << 1) | i2cTransaction.read;
+			I2C1ADB1 = (uint8_t)(i2cTransaction.address << 1) | i2cTransaction.read;
 			//Check if pure read
 			if (i2cTransaction.txLength > 0) {
 				//load number of bits to be transmitted
@@ -192,7 +190,7 @@ I2C_Result_t I2C_Service(void) {
 		case I2C_STATE_RESTART:
 			//check if restart on the i2c is done
 			if (I2C1CON0bits.MDR) {
-				I2C1ADB1 = (i2cTransaction.address << 1) | 1; //Load address with read bit
+				I2C1ADB1 = (uint8_t)(i2cTransaction.address << 1) | 1; //Load address with read bit
 				I2C1CNT = i2cTransaction.rxLength;
 				I2C1CON0bits.RSEN = 0; // Clear RSEN to avoid accidental future restarts
 				I2C1CON0bits.S = 1; // Trigger the Restart (acts like a Start)
@@ -226,6 +224,9 @@ I2C_Result_t I2C_Service(void) {
 				i2cTransaction.busy = 0;
 				i2cTransaction.state = I2C_STATE_IDLE;
 			}
+			break;
+		default: //Catch all if someting has gone wrong
+			return I2C_ERROR_UNKNOWN;
 			break;
 	}
 	return I2C_OK;
