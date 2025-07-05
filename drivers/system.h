@@ -35,6 +35,8 @@
 
 // 'C' source line config statements
 
+#define _XTAL_FREQ 64000000
+
 // CONFIG1
 #pragma config FEXTOSC = OFF    // External Oscillator Selection (Oscillator not enabled)
 #pragma config RSTOSC = HFINTOSC_64MHZ// Reset Oscillator Selection (HFINTOSC with HFFRQ = 64 MHz and CDIV = 1:1)

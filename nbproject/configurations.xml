@@ -27,6 +27,7 @@
         <itemPath>drivers/system.c</itemPath>
         <itemPath>drivers/pps_driver.c</itemPath>
         <itemPath>drivers/i2c_driver.c</itemPath>
+        <itemPath>drivers/BQ27427.c</itemPath>
       </logicalFolder>
       <itemPath>drivers/main.c</itemPath>
     </logicalFolder>
@@ -42,7 +43,7 @@
         <targetDevice>PIC18F56Q71</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>pk4hybrid</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>3.00</languageToolchainVersion>
         <platform>3</platform>

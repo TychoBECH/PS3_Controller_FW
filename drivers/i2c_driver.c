@@ -118,7 +118,7 @@ I2C_Result_t I2C_WriteRead(uint8_t address, uint8_t *txBuffer, uint8_t txLength,
 
 	i2cTransaction.busy = 1;
 	i2cTransaction.address = address;
-	i2cTransaction.read = 1;
+	i2cTransaction.read = 0; //WriteRead starts with Write
 	i2cTransaction.rxBuffer = rxBuffer;
 	i2cTransaction.rxLength = rxLength;
 	i2cTransaction.rxIndex = 0;
@@ -142,7 +142,7 @@ I2C_Result_t I2C_Service(void) {
 	switch (i2cTransaction.state) {
 		case I2C_STATE_START:
 			//-> ADB is enabled -> Load address
-			I2C1ADB1 = (uint8_t)(i2cTransaction.address << 1) | i2cTransaction.read;
+			I2C1ADB1 = (uint8_t) (i2cTransaction.address << 1) | i2cTransaction.read;
 			//Check if pure read
 			if (i2cTransaction.txLength > 0) {
 				//load number of bits to be transmitted
@@ -190,7 +190,7 @@ I2C_Result_t I2C_Service(void) {
 		case I2C_STATE_RESTART:
 			//check if restart on the i2c is done
 			if (I2C1CON0bits.MDR) {
-				I2C1ADB1 = (uint8_t)(i2cTransaction.address << 1) | 1; //Load address with read bit
+				I2C1ADB1 = (uint8_t) (i2cTransaction.address << 1) | 1; //Load address with read bit
 				I2C1CNT = i2cTransaction.rxLength;
 				I2C1CON0bits.RSEN = 0; // Clear RSEN to avoid accidental future restarts
 				I2C1CON0bits.S = 1; // Trigger the Restart (acts like a Start)
@@ -199,21 +199,19 @@ I2C_Result_t I2C_Service(void) {
 			break;
 		case I2C_STATE_RECEIVE_DATA:
 			//check if write on the i2c is done from the address or the last read
-			if (I2C1CON0bits.MDR) {
-				//Check for ACK
-				if (I2C1ERRbits.NACKIF) {
-					//Terminate Transmission
-					I2C1ERRbits.NACKIF = 0;
-					I2C1CON1bits.ACKCNT = 1;
-					i2cTransaction.state = I2C_STATE_STOP;
-					return I2C_ERROR_NACK; //No more actions needed in this transmission
+			if (I2C1STAT1bits.RXBF) {
+				// Check if we are about to receive the last byte
+				if ((i2cTransaction.rxIndex + 1) == i2cTransaction.rxLength) {
+					// Prepare to NACK the last byte
+					I2C1CON1bits.ACKCNT = 1; // Send NACK after next received byte
 				}
-				//check if there is still data to be read
-				if (I2C1CNT > 0) {
-					//Load new data
-					i2cTransaction.rxBuffer[i2cTransaction.rxIndex++] = I2C1RXB;
-				} else {//nothing more to do then to stop the transaction
-					I2C1CON1bits.ACKCNT = 1;
+				
+				// Read the data
+				i2cTransaction.rxBuffer[i2cTransaction.rxIndex++] = I2C1RXB;
+
+				// Check if this was the last byte
+				if (i2cTransaction.rxIndex >= i2cTransaction.rxLength) {
+					I2C1CON1bits.P = 1; // Send STOP condition
 					i2cTransaction.state = I2C_STATE_STOP;
 				}
 			}

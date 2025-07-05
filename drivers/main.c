@@ -71,11 +71,11 @@ void main(void) {
 	System_Init();
 	I2C_Init();
 	LATAbits.LATA1 = 1;
-	while (1 == 1) {
-		I2C_Write(0b1110100, data, sizeof (data));
-		while (I2C_isBusy()) {
-			I2C_Service();
-		}
+	static uint16_t asdf = 0;
+	while (1) {
+		asdf = bq27427_get_voltage();
+		__delay_ms(1);
+		NOP();
 	}
 	return;
 }
