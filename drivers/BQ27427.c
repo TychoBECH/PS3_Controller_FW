@@ -27,7 +27,6 @@ void bq27427_send_subcomand(uint16_t subcmd) {
 	while (I2C_isBusy()) {
 		I2C_Service();
 	}
-
 }
 
 void bq27427_send_subcomand_with_data(uint16_t subcmd, uint8_t *data, uint8_t length) {
@@ -35,7 +34,14 @@ void bq27427_send_subcomand_with_data(uint16_t subcmd, uint8_t *data, uint8_t le
 }
 
 void bq27427_write_word(uint8_t reg, uint16_t data) {
-
+	uint8_t intermidiate[3];
+	intermidiate[0] = reg;
+	intermidiate[1] = (uint8_t)(data & 0xFF);
+	intermidiate[2] = (uint8_t)data>>8;
+	I2C_Write(BQ27427_ADDRESS, intermidiate, sizeof (intermidiate));
+	while (I2C_isBusy()) {
+		I2C_Service();
+	}
 }
 
 void bq27427_send_command(uint8_t command) {
@@ -73,4 +79,10 @@ uint8_t bq27427_get_state_of_charge(void) { //in %
 	uint8_t state_of_charge = 0;
 	state_of_charge = (uint8_t)bq27427_read_word(BQ27427_CMD_StateOfCharge);
 	return state_of_charge;
+}
+
+void bq27427_update_status(void){
+	bq27427Status.voltage = bq27427_get_voltage();
+	bq27427Status.temperature = bq27427_get_temperature();
+	bq27427Status.soc = bq27427_get_state_of_charge();
 }

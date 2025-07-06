@@ -73,7 +73,7 @@ void main(void) {
 	LATAbits.LATA1 = 1;
 	static uint16_t asdf = 0;
 	while (1) {
-		asdf = bq27427_get_voltage();
+		bq27427_update_status();
 		__delay_ms(1);
 		NOP();
 	}

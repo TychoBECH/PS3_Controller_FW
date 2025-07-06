@@ -102,24 +102,319 @@ typedef struct {
 } bq27427_status_t;
 //</editor-fold>
 
-// Comment a function and leverage automatic documentation with slash star star
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_send_subcomand(uint16_t subcmd);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Sends a 2-byte subcommand to the BQ27427 Control() command interface.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function writes a subcommand to the Control() register (0x00) of the BQ27427 fuel gauge, allowing control over various internal operations such as unsealing, resetting, or switching modes.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>I2C must be initialized and the BQ27427 must be powered.</p>
+
+	<p><b>Parameters:</b></p>
+	<ul>
+		<li><b>subcmd</b> - 16-bit subcommand to be sent (e.g., 0x0013 for SET_CFGUPDATE).</li>
+	</ul>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
 void bq27427_send_subcomand(uint16_t subcmd);
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_send_subcomand_with_data(uint16_t subcmd, uint8_t *data, uint8_t length);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Sends a subcommand followed by additional data to the BQ27427 fuel gauge.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	Used for commands that require additional payload data beyond the 2-byte subcommand. This function writes the subcommand first, followed by the user-supplied data buffer.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>I2C must be initialized and the device must be in a mode that allows writes.</p>
+
+	<p><b>Parameters:</b></p>
+	<ul>
+		<li><b>subcmd</b> - The subcommand opcode to send.</li>
+		<li><b>data</b> - Pointer to a buffer of bytes to follow the subcommand.</li>
+		<li><b>length</b> - Number of bytes in the data buffer.</li>
+	</ul>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
 void bq27427_send_subcomand_with_data(uint16_t subcmd, uint8_t *data, uint8_t length);
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_write_word(uint8_t reg, uint16_t data);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Writes a 16-bit word to a standard command register on the BQ27427.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function performs a 2-byte write to a specific register address. It is used for writing standard command values or updating memory.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>I2C must be initialized and communication with the BQ27427 must be functioning.</p>
+
+	<p><b>Parameters:</b></p>
+	<ul>
+		<li><b>reg</b> - The register address to write to.</li>
+		<li><b>data</b> - The 16-bit value to write.</li>
+	</ul>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
 void bq27427_write_word(uint8_t reg, uint16_t data);
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_send_command(uint8_t command);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Sends a one-byte command to the BQ27427.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function is used to initiate a single-byte command on the BQ27427, typically used in extended data commands or control procedures.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>The I2C interface must be initialized.</p>
+
+	<p><b>Parameters:</b></p>
+	<ul>
+		<li><b>command</b> - The 8-bit command value to send.</li>
+	</ul>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
 void bq27427_send_command(uint8_t command);
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>uint16_t bq27427_read_word(uint8_t reg);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Reads a 16-bit word from a register on the BQ27427.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function reads two bytes from the specified standard command register and returns the result as a 16-bit value.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>The I2C interface must be active and functioning correctly.</p>
+
+	<p><b>Parameters:</b></p>
+	<ul>
+		<li><b>reg</b> - The register address to read from.</li>
+	</ul>
+
+	<p><b>Returns:</b></p>
+	<p>16-bit value read from the device.</p>
+ */
 uint16_t bq27427_read_word(uint8_t reg);
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>uint16_t bq27427_get_voltage(void);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Reads the battery voltage from the BQ27427.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function reads the voltage value from the BQ27427 using the <code>Voltage()</code> command (0x04) and returns the value in millivolts.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>The fuel gauge must be powered and initialized.</p>
+
+	<p><b>Parameters:</b></p>
+	<p>None.</p>
+
+	<p><b>Returns:</b></p>
+	<p>Battery voltage in millivolts.</p>
+ */
 uint16_t bq27427_get_voltage(void);	//in mV
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>int16_t bq27427_get_current(void);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Reads the average current from the BQ27427 fuel gauge.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function reads the average battery current (signed) using the <code>AverageCurrent()</code> command (0x10) and returns it in milliamps.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>The BQ27427 must be active and able to respond to I2C queries.</p>
+
+	<p><b>Parameters:</b></p>
+	<p>None.</p>
+
+	<p><b>Returns:</b></p>
+	<p>Current in milliamps (positive for charging, negative for discharging).</p>
+ */
 int16_t bq27427_get_current(void);	//in mA
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>uint16_t bq27427_get_temperature(void);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Retrieves the battery temperature from the BQ27427.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	Reads the internal or external temperature measurement and returns it in tenths of degrees Celsius (0.1°C resolution).
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>Temperature source must be configured in the OpConfig.</p>
+
+	<p><b>Parameters:</b></p>
+	<p>None.</p>
+
+	<p><b>Returns:</b></p>
+	<p>Temperature in 0.1°C units (e.g., 250 = 25.0°C).</p>
+ */
 uint16_t bq27427_get_temperature(void); //in 0.1°C
 
+/**
+	<p><b>Function prototype:</b></p>
+	<code>uint8_t bq27427_get_state_of_charge(void);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Returns the remaining state of charge (SOC) of the battery.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function queries the <code>StateOfCharge()</code> command (0x1C) and returns the battery SOC in percent.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>Device must be in NORMAL or SLEEP mode and actively gauging.</p>
+
+	<p><b>Parameters:</b></p>
+	<p>None.</p>
+
+	<p><b>Returns:</b></p>
+	<p>State of charge in percent (0?100).</p>
+ */
 uint8_t bq27427_get_state_of_charge(void); //in %
+
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_unseal(void);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Sends the unseal key to the BQ27427 to allow configuration changes.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	If the BQ27427 is sealed, this function sends the appropriate unseal key (typically 0x8000 twice) to allow access to protected commands and configuration memory.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>Gauge must be sealed. I2C communication must be working.</p>
+
+	<p><b>Parameters:</b></p>
+	<p>None.</p>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
+void bq27427_unseal(void);
+
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_seal(void);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Places the BQ27427 back into sealed mode.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function sends the <code>Control(0x0020)</code> subcommand to return the fuel gauge to sealed mode, preventing further configuration changes.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>The device must be unsealed first.</p>
+
+	<p><b>Parameters:</b></p>
+	<p>None.</p>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
+void bq27427_seal(void);
+
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_enter_config_update(void);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Puts the fuel gauge into CONFIG UPDATE mode.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	This function sends the <code>SET_CFGUPDATE</code> subcommand to place the device in CONFIG UPDATE mode, which allows changes to data flash parameters.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>The device must be unsealed.</p>
+
+	<p><b>Parameters:</b></p>
+	<p>None.</p>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
+void bq27427_enter_config_update(void);
+
+/**
+	<p><b>Function prototype:</b></p>
+	<code>void bq27427_set_design_capatity(uint16_t capacity);</code>
+
+	<p><b>Summary:</b></p>
+	<p>Updates the design capacity parameter in the fuel gauge.</p>
+
+	<p><b>Description:</b></p>
+	<p>
+	Changes the Design Capacity in the State subclass of Data Memory to match the battery's actual capacity. This involves entering CONFIG UPDATE mode, modifying the data block, and writing a new checksum.
+	</p>
+
+	<p><b>Precondition:</b></p>
+	<p>The device must be unsealed and in CONFIG UPDATE mode.</p>
+
+	<p><b>Parameters:</b></p>
+	<ul>
+		<li><b>capacity</b> - Design capacity in mAh (e.g., 1200 for 1200mAh).</li>
+	</ul>
+
+	<p><b>Returns:</b></p>
+	<p>None.</p>
+ */
+void bq27427_set_design_capatity(uint16_t capacity);
 
 
 /**
@@ -168,7 +463,7 @@ uint8_t bq27427_get_state_of_charge(void); //in %
 	consider integrating the I2C_Service() calls into a task loop or scheduler.
 	</p>
  */
-void bq27427_update_status(bq27427_status_t *status);
+void bq27427_update_status(void);
 
 
 #ifdef	__cplusplus
