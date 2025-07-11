@@ -84,7 +84,9 @@ I2C_Result_t I2C_Write(uint8_t address, uint8_t *txBuffer, uint8_t txLength) {
 	i2cTransaction.txBuffer = txBuffer;
 	i2cTransaction.txLength = txLength;
 	i2cTransaction.txIndex = 0;
-
+	
+	i2cTransaction.rxBuffer = NULL;
+	i2cTransaction.rxIndex = 0;
 	i2cTransaction.rxLength = 0;
 
 	I2C1CON1bits.ACKCNT = 0;
@@ -182,11 +184,13 @@ I2C_Result_t I2C_Service(void) {
 					//Load new data
 					I2C1TXB = i2cTransaction.txBuffer[i2cTransaction.txIndex++];
 				} else {
-					//Check for Write/Read combined
-					if (i2cTransaction.rxLength > 0) {//Check if it is a WriteRead transaction and a Restart is needed
-						if (I2C1PIRbits.CNTIF) { // counter reached zero       
-							I2C1CON0bits.RSEN = 1; // request repeated?start     
-							I2C1PIRbits.CNTIF = 0; // clear the flag you used    
+					/* last data byte has already been loaded & CNT is counting down */
+					if (i2cTransaction.rxLength > 0U) /* Write?Read combined ? */ {
+						/* wait for byte?counter to hit zero */
+						if (I2C1PIRbits.CNTIF) {
+							I2C1CON0bits.RSEN = 1;
+							I2C1PIRbits.CNTIF = 0;
+							I2C1PIRbits.SCIF = 0;
 							i2cTransaction.state = I2C_STATE_RESTART;
 						}
 					} else {
@@ -198,14 +202,17 @@ I2C_Result_t I2C_Service(void) {
 			}
 			break;
 		case I2C_STATE_RESTART:
-			//check if restart on the i2c is done
-			if (I2C1PIRbits.RSCIF) {
-				I2C1PIRbits.RSCIF = 0;
-				I2C1ADB1 = (uint8_t) (i2cTransaction.address << 1) | 1; //Load address with read bit
-				I2C1CNTL = (i2cTransaction.rxLength >> 8);
-				I2C1CNTL = (i2cTransaction.rxLength & 0xFF);
-				I2C1CON0bits.RSEN = 0; // Clear RSEN to avoid accidental future restarts
-				I2C1CON0bits.S = 1; // Trigger the Restart (acts like a Start)
+			if ((I2C1PIRbits.RSCIF) || (I2C1CON0bits.RSEN == 0)) {
+				I2C1PIRbits.RSCIF = 0; 
+
+				I2C1ADB1 = (uint8_t) (i2cTransaction.address << 1) | 1U; //Load address with read bit
+				I2C1CNTH = (uint8_t) (i2cTransaction.rxLength >> 8);
+				I2C1CNTL = (uint8_t) i2cTransaction.rxLength;
+
+				I2C1CON1bits.ACKCNT = 0;
+
+				I2C1CON0bits.S = 1;
+
 				i2cTransaction.state = I2C_STATE_RECEIVE_DATA;
 			}
 			break;
