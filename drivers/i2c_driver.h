@@ -83,10 +83,10 @@ typedef struct {
 	uint8_t address;
 	uint8_t *txBuffer;
 	uint8_t *rxBuffer;
-	uint8_t txLength;
-	uint8_t rxLength;
-	uint8_t txIndex;
-	uint8_t rxIndex;
+	uint16_t txLength;
+	uint16_t rxLength;
+	uint16_t txIndex;
+	uint16_t rxIndex;
 	bool read; // 1 for read operation, 0 for write
 	bool busy; // 1 for is busy
 	I2C_Result_t result;
