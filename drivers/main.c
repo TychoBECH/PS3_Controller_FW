@@ -72,6 +72,9 @@ void main(void) {
 	I2C_Init();
 	LATAbits.LATA1 = 1;
 	static uint16_t asdf = 0;
+	bq27427_unseal();
+	bq27427_enter_config_update();
+	bq27427_set_design_capatity(400);
 	while (1) {
 		bq27427_update_status();
 		__delay_ms(1);

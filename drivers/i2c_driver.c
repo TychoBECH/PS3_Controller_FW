@@ -198,14 +198,13 @@ I2C_Result_t I2C_Service(void) {
 			}
 			break;
 		case I2C_STATE_RECEIVE_DATA:
+			// Check if we are about to receive the last byte
+			if (i2cTransaction.rxIndex == i2cTransaction.rxLength - 1) {
+				// Two bytes left to receive ? set NACK for the *next* one (the last)
+				I2C1CON1bits.ACKCNT = 1;
+			}
 			//check if write on the i2c is done from the address or the last read
 			if (I2C1STAT1bits.RXBF) {
-				// Check if we are about to receive the last byte
-				if ((i2cTransaction.rxIndex + 1) == i2cTransaction.rxLength) {
-					// Prepare to NACK the last byte
-					I2C1CON1bits.ACKCNT = 1; // Send NACK after next received byte
-				}
-				
 				// Read the data
 				i2cTransaction.rxBuffer[i2cTransaction.rxIndex++] = I2C1RXB;
 

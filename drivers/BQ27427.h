@@ -43,6 +43,8 @@
 
 // TODO Insert declarations
 
+#define _XTAL_FREQ 64000000
+
 //<editor-fold desc="BQ27427 definitions">
 #define BQ27427_ADDRESS							0x55
 
@@ -344,29 +346,6 @@ uint8_t bq27427_get_state_of_charge(void); //in %
 	<p>None.</p>
  */
 void bq27427_unseal(void);
-
-/**
-	<p><b>Function prototype:</b></p>
-	<code>void bq27427_seal(void);</code>
-
-	<p><b>Summary:</b></p>
-	<p>Places the BQ27427 back into sealed mode.</p>
-
-	<p><b>Description:</b></p>
-	<p>
-	This function sends the <code>Control(0x0020)</code> subcommand to return the fuel gauge to sealed mode, preventing further configuration changes.
-	</p>
-
-	<p><b>Precondition:</b></p>
-	<p>The device must be unsealed first.</p>
-
-	<p><b>Parameters:</b></p>
-	<p>None.</p>
-
-	<p><b>Returns:</b></p>
-	<p>None.</p>
- */
-void bq27427_seal(void);
 
 /**
 	<p><b>Function prototype:</b></p>
