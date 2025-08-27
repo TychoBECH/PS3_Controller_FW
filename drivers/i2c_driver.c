@@ -84,7 +84,7 @@ I2C_Result_t I2C_Write(uint8_t address, uint8_t *txBuffer, uint8_t txLength) {
 	i2cTransaction.txBuffer = txBuffer;
 	i2cTransaction.txLength = txLength;
 	i2cTransaction.txIndex = 0;
-	
+
 	i2cTransaction.rxBuffer = NULL;
 	i2cTransaction.rxIndex = 0;
 	i2cTransaction.rxLength = 0;
@@ -150,18 +150,22 @@ I2C_Result_t I2C_Service(void) {
 			//-> ADB is enabled -> Load address
 			I2C1ADB1 = (uint8_t) (i2cTransaction.address << 1) | i2cTransaction.read;
 			//Check if pure read
-			if (i2cTransaction.txLength > 0) {
+			if (i2cTransaction.txLength > 0) { //Could be writeRead or pure write
 				//load number of bits to be transmitted
 				I2C1CNTH = (i2cTransaction.txLength >> 8);
 				I2C1CNTL = (i2cTransaction.txLength & 0xFF);
-				//Load first byte
-				I2C1TXB = i2cTransaction.txBuffer[i2cTransaction.txIndex++];
+				//Mixed write read -> Setup for restart
+				if (i2cTransaction.rxLength > 0) {
+					I2C1CON0bits.RSEN = 1;
+				}
 				i2cTransaction.state = I2C_STATE_SEND_DATA;
-			} else if (i2cTransaction.rxLength > 0) {
+
+			} else if (i2cTransaction.rxLength > 0) { //is only read
 				//only load how much data should be read
 				I2C1CNTH = (i2cTransaction.rxLength >> 8);
 				I2C1CNTL = (i2cTransaction.rxLength & 0xFF);
 				i2cTransaction.state = I2C_STATE_RECEIVE_DATA;
+
 			}
 			//send start and address
 			I2C1CON0bits.S = 1;
@@ -203,7 +207,7 @@ I2C_Result_t I2C_Service(void) {
 			break;
 		case I2C_STATE_RESTART:
 			if ((I2C1PIRbits.RSCIF) || (I2C1CON0bits.RSEN == 0)) {
-				I2C1PIRbits.RSCIF = 0; 
+				I2C1PIRbits.RSCIF = 0;
 
 				I2C1ADB1 = (uint8_t) (i2cTransaction.address << 1) | 1U; //Load address with read bit
 				I2C1CNTH = (uint8_t) (i2cTransaction.rxLength >> 8);
@@ -237,6 +241,14 @@ I2C_Result_t I2C_Service(void) {
 		case I2C_STATE_STOP:
 			if (I2C1PIRbits.PCIF) {
 				I2C1PIRbits.PCIF = 0;
+
+				I2C1PIR = 0x00;
+				I2C1ERRbits.BCLIF = 0;
+				I2C1ERRbits.BTOIF = 0;
+				I2C1ERRbits.NACKIF = 0;
+				I2C1STAT1 = 0x00;
+				I2C1STAT1bits.CLRBF = 1;
+
 				i2cTransaction.busy = 0;
 				i2cTransaction.state = I2C_STATE_IDLE;
 			}

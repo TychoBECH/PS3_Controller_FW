@@ -9,6 +9,7 @@
       <itemPath>drivers/pps_driver.h</itemPath>
       <itemPath>drivers/i2c_driver.h</itemPath>
       <itemPath>drivers/BQ27427.h</itemPath>
+      <itemPath>drivers/spi_driver.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -28,6 +29,7 @@
         <itemPath>drivers/pps_driver.c</itemPath>
         <itemPath>drivers/i2c_driver.c</itemPath>
         <itemPath>drivers/BQ27427.c</itemPath>
+        <itemPath>drivers/spi_driver.c</itemPath>
       </logicalFolder>
       <itemPath>drivers/main.c</itemPath>
     </logicalFolder>
