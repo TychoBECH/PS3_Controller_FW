@@ -35,13 +35,22 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
-#include "i2c_driver.h"
+
+#include "../mcc_generated_files/i2c_host/i2c1.h"
 
 // TODO Insert appropriate #include <>
 
 // TODO Insert C++ class definitions if appropriate
 
 // TODO Insert declarations
+
+#define I2C1_Host_Initialize I2C1_Initialize
+#define I2C1_Host_Deinitialize I2C1_Deinitialize
+#define I2C_Write I2C1_Write
+#define I2C_Read I2C1_Read
+#define I2C_WriteRead I2C1_WriteRead
+#define I2C1_Host_ErrorGet I2C1_ErrorGet
+#define I2C_isBusy I2C1_IsBusy
 
 #define _XTAL_FREQ 64000000
 

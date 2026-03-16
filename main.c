@@ -31,6 +31,7 @@
     THIS SOFTWARE.
 */
 #include "mcc_generated_files/system/system.h"
+#include "drivers/CC2500_driver.h"
 
 /*
     Main application
@@ -50,8 +51,29 @@ int main(void)
     // Disable the Global Interrupts 
     //INTERRUPT_GlobalInterruptDisable(); 
 
+	UART1_Enable();
+	UART1_TransmitEnable();
+	
+	ADC_Enable();
+	
+	ADC_ChannelSelect(ADC_CHANNEL_AND2);
+	
+	IO_RD3_SetHigh();
 
     while(1)
-    {
+    {	
+		ADC_ConversionStart();
+		while (ADC_IsConversionDone() == 0) {
+			NOP();
+		}
+		uint16_t data = ADC_ConversionResultGet();
+		
+		uint8_t state = CC2500_GetState();
+		__delay_ms(10);
+		CC2500_SetMode(CC2500_Command_STX);
+		state = CC2500_GetState();
+		__delay_ms(10);
+		UART1_Write(data>>8);
+		UART1_Write(data);
     }    
 }
